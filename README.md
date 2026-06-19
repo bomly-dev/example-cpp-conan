@@ -39,24 +39,45 @@ Understand every path that pulls `openssl` into your graph:
 bomly explain openssl --url https://github.com/bomly-dev/example-cpp-conan
 ```
 
-### 4. Add a security gate to CI
+### 4. See what changed between releases
+
+Compare dependency graphs across any two refs - commits, branches, or tags:
+
+```bash
+bomly diff \
+  --url https://github.com/bomly-dev/example-cpp-conan \
+  --base v0.9.0 --head v1.0.0 \
+  --enrich
+```
+
+### 5. Add a security gate to CI
 
 Fail your pipeline automatically when high-severity vulnerabilities are introduced:
 
 ```yaml
-# .github/workflows/bomly.yml
-name: Bomly Security Scan
-on: [push, pull_request]
+# .github/workflows/bomly-guard.yml
+name: Bomly Guard
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  security-events: write
 
 jobs:
-  scan:
+  guard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Scan with Bomly
-        run: |
-          curl -sSfL https://bomly.dev/install.sh | sh
-          bomly scan --enrich --audit --fail-on high
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      # Add the package-manager setup steps this ecosystem needs before Bomly Guard.
+      - uses: bomly-dev/bomly-guard@v1
+        with:
+          fail-on: high
+          comment-summary-in-pr: always
 ```
 
 Made with [Bomly](https://bomly.dev) — open-source SCA for every ecosystem.
