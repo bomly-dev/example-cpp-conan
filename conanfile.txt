@@ -1,0 +1,11 @@
+[requires]
+# openssl/1.1.1s: EOL; affected by multiple CVEs (CVE-2022-3602, CVE-2022-3786)
+openssl/1.1.1s
+# zlib/1.2.11: CVE-2022-37434 (heap-based buffer overflow in inflate)
+zlib/1.2.11
+
+[tool_requires]
+cmake/3.27.0
+
+[generators]
+cmake
