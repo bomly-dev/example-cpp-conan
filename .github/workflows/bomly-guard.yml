@@ -27,5 +27,6 @@ jobs:
         with:
           log-level: debug
           ecosystems: cpp
+          matchers: +scorecard
           fail-on: any
           comment-summary-in-pr: always
